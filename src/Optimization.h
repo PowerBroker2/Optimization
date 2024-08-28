@@ -173,6 +173,24 @@ double get_best_result(const VectorXd& simplex_results)
 
 
 
+VectorXd get_next_best_args(const MatrixXd& simplex_args)
+{
+    // Simplex arguments MUST be sorted beforehand
+    return simplex_args(all, last-1);
+}
+
+
+
+
+double get_next_best_result(const VectorXd& simplex_results)
+{
+    // Simplex results MUST be sorted beforehand
+    return simplex_results(last-1);
+}
+
+
+
+
 VectorXd get_worst_args(const MatrixXd& simplex_args)
 {
     // Simplex arguments MUST be sorted beforehand
@@ -223,6 +241,8 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
     VectorXd best_args        = get_best_args(simplex_args);
     double   cur_best_result  = get_best_result(simplex_results);
     double   prev_best_result = cur_best_result;
+    VectorXd next_best_args   = get_next_best_args(simplex_args);
+    double   next_best_result = get_next_best_result(simplex_results);
     VectorXd worst_args       = get_worst_args(simplex_args);
     double   worst_result     = get_worst_result(simplex_results);
 
@@ -236,6 +256,8 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
         best_args        = get_best_args(simplex_args);
         prev_best_result = cur_best_result;
         cur_best_result  = get_best_result(simplex_results);
+        next_best_args   = get_next_best_args(simplex_args);
+        next_best_result = get_next_best_result(simplex_results);
         worst_args       = get_worst_args(simplex_args);
         worst_result     = get_worst_result(simplex_results);
 
@@ -257,7 +279,17 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
         VectorXd reflection_pt    = (alpha * (centroid - worst_args)) + centroid;
         double   reflection_score = func(reflection_pt);
 
-        if (reflection_score < cur_best_result) // This is wrong <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        if ((reflection_score < next_best_result) && (reflection_score >= best_result))
+        {
+            // save reflection_pt
+                update_worst_case(reflection_pt,
+                                  reflection_score,
+                                  simplex_args,
+                                  simplex_results);
+                continue;
+        }
+
+        if (reflection_score < best_result)
         {
             VectorXd expansion_pt    = (gamma * (centroid - worst_args)) + centroid;
             double   expansion_score = func(expansion_pt);
