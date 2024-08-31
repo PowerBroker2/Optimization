@@ -101,7 +101,7 @@ MatrixXd init_simplex_args(const VectorXd& x_start,
     MatrixXd simplex_args(dim, dim + 1);
     simplex_args.col(0) = x_start;
 
-    for (int i=1; i<dim+1; i++)
+    for (int i=1; i<dim; i++) // ??????
     {
         VectorXd step_vec(dim);
         step_vec = VectorXd::Zero(dim);
@@ -116,8 +116,8 @@ MatrixXd init_simplex_args(const VectorXd& x_start,
 
 
 
-VectorXd init_simplex_results(      double    (*func)(const VectorXd&),
-                              const MatrixXd& simplex_args)
+VectorXd get_simplex_results(      double    (*func)(const VectorXd&),
+                             const MatrixXd& simplex_args)
 {
     int dim = simplex_args.cols();
 
@@ -209,13 +209,32 @@ double get_worst_result(const VectorXd& simplex_results)
 
 
 
-void update_worst_case(const VectorXd& new_args,
-                       const double&   new_score,
-                             MatrixXd& simplex_args,
-                             VectorXd& simplex_results)
+void update_worst_case(VectorXd& new_args,
+                       double&   new_score,
+                       MatrixXd& simplex_args,
+                       VectorXd& simplex_results)
 {
     simplex_args(all, last) = new_args;
-    simplex_results(last)   = new_score;
+    simplex_results(simplex_results.size() - 1) = new_score; // ??????
+}
+
+
+
+
+void shrink_args(const double&   sigma,
+                       MatrixXd& simplex_args,
+                       VectorXd& simplex_results,
+                       double    (*func)(const VectorXd&))
+{
+    // Simplex arguments MUST be sorted beforehand
+    int dim = simplex_args.cols();
+
+    VectorXd best_args = get_best_args(simplex_args);
+
+    for (int i=0; i<dim-1; i++) // Don't mess with the best args
+        simplex_args(all, i) = (sigma * (simplex_args(all, i) - best_args)) + best_args;
+    
+    simplex_results = get_simplex_results(func, simplex_args);
 }
 
 
@@ -233,7 +252,7 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
                                const double&   sigma           = 0.5)   // ?
 {
     MatrixXd simplex_args    = init_simplex_args(x_start, step);
-    VectorXd simplex_results = init_simplex_results(func, simplex_args);
+    VectorXd simplex_results = get_simplex_results(func, simplex_args);
     sort_args_and_results(simplex_args, simplex_results);
 
     VectorXd centroid = calc_centroid(simplex_args);
@@ -244,13 +263,14 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
     VectorXd next_best_args   = get_next_best_args(simplex_args);
     double   next_best_result = get_next_best_result(simplex_results);
     VectorXd worst_args       = get_worst_args(simplex_args);
-    double   worst_result     = get_worst_result(simplex_results);
+    // double   worst_result     = get_worst_result(simplex_results);
 
     int iteration = 0;
     int no_improv = 0;
 
     while(true)
     {
+        // Getting new results is already handled in `update_worst_case()` and `shrink_args()`
         sort_args_and_results(simplex_args, simplex_results);
 
         best_args        = get_best_args(simplex_args);
@@ -259,7 +279,7 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
         next_best_args   = get_next_best_args(simplex_args);
         next_best_result = get_next_best_result(simplex_results);
         worst_args       = get_worst_args(simplex_args);
-        worst_result     = get_worst_result(simplex_results);
+        // worst_result     = get_worst_result(simplex_results);
 
         if (max_iter && (iteration >= max_iter))
             return best_args;
@@ -279,17 +299,17 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
         VectorXd reflection_pt    = (alpha * (centroid - worst_args)) + centroid;
         double   reflection_score = func(reflection_pt);
 
-        if ((reflection_score < next_best_result) && (reflection_score >= best_result))
+        if ((reflection_score < next_best_result) && (reflection_score >= cur_best_result))
         {
             // save reflection_pt
-                update_worst_case(reflection_pt,
-                                  reflection_score,
-                                  simplex_args,
-                                  simplex_results);
-                continue;
+            update_worst_case(reflection_pt,
+                              reflection_score,
+                              simplex_args,
+                              simplex_results);
+            continue;
         }
 
-        if (reflection_score < best_result)
+        if (reflection_score < cur_best_result)
         {
             VectorXd expansion_pt    = (gamma * (centroid - worst_args)) + centroid;
             double   expansion_score = func(expansion_pt);
@@ -317,7 +337,7 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
         VectorXd contraction_pt    = (rho * (centroid - worst_args)) + centroid;
         double   contraction_score = func(contraction_pt);
 
-        if (contraction_score < ) // This is wrong <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        if (contraction_score < next_best_result)
         {
             // save contraction_pt
             update_worst_case(contraction_pt,
@@ -326,9 +346,13 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
                               simplex_results);
             continue;
         }
+
+        // Shrink points
+        shrink_args(sigma,
+                    simplex_args,
+                    simplex_results,
+                    func);
     }
 
-    VectorXd hi;
-
-    return hi;
+    return simplex_args(all, last);
 }
