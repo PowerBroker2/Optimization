@@ -249,7 +249,7 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
                                const double&   alpha           = 1.0,   // Reflection multiplier
                                const double&   gamma           = 2.0,   // Expansion multiplier
                                const double&   rho             = -0.5,  // Contraction multiplier
-                               const double&   sigma           = 0.5)   // ?
+                               const double&   sigma           = 0.5)   // Shrink multiplier
 {
     MatrixXd simplex_args    = init_simplex_args(x_start, step);
     VectorXd simplex_results = get_simplex_results(func, simplex_args);
