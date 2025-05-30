@@ -12,40 +12,40 @@
 using namespace Eigen;
 
 
-// void printVecXd(const VectorXd& vec,
-//                 const int&      p=5,
-//                 Stream&         stream=Serial)
-// {
-//     for (int i=0; i<vec.rows(); i++)
-//     {
-//         if (vec(i) >= 0)
-//             Serial.print(' ');
+void printVecXd(const VectorXd& vec,
+                const int&      p=5,
+                Stream&         stream=Serial)
+{
+    for (int i=0; i<vec.rows(); i++)
+    {
+        if (vec(i) >= 0)
+            Serial.print(' ');
         
-//         stream.println(vec(i), p);
-//     }
-// }
+        stream.println(vec(i), p);
+    }
+}
 
 
-// void printMatXd(const MatrixXd& mat,
-//                 const int&      p=5,
-//                 Stream&         stream=Serial)
-// {
-//     for (int i=0; i<mat.rows(); i++)
-//     {
-//         for (int j=0; j<mat.cols(); j++)
-//         {
-//             if (mat(i, j) >= 0)
-//                 Serial.print(' ');
+void printMatXd(const MatrixXd& mat,
+                const int&      p=5,
+                Stream&         stream=Serial)
+{
+    for (int i=0; i<mat.rows(); i++)
+    {
+        for (int j=0; j<mat.cols(); j++)
+        {
+            if (mat(i, j) >= 0)
+                Serial.print(' ');
         
-//             stream.print(mat(i, j), p);
+            stream.print(mat(i, j), p);
 
-//             if (j != (mat.cols() - 1))
-//                 stream.print(", ");
-//         }
+            if (j != (mat.cols() - 1))
+                stream.print(", ");
+        }
 
-//         stream.println();
-//     }
-// }
+        stream.println();
+    }
+}
 
 
 
@@ -93,6 +93,18 @@ MatrixXd sort_cols(const MatrixXd& mat, const VectorXi& order)
 
 
 
+/**
+ * @brief Initializes a matrix of dithered, "simplex" arguments.
+ *
+ * This function takes an initial argument guess, dithers the arguments
+ * by a given step size, and returns the group of dithered, "simplex"
+ * arguments as a matrix. This matrix is then used to bootstrap the
+ * optimization from an initial guess.
+ *
+ * @param x_start A vector of "initial guess" arguments.
+ * @param step    The argument dither step size.
+ * @return        The dithered, "simplex" arguments.
+ */
 MatrixXd init_simplex_args(const VectorXd& x_start,
                            const double&   step = 0.1)
 {
@@ -101,7 +113,7 @@ MatrixXd init_simplex_args(const VectorXd& x_start,
     MatrixXd simplex_args(dim, dim + 1);
     simplex_args.col(0) = x_start;
 
-    for (int i=1; i<dim; i++) // ??????
+    for (int i=1; i<(dim+1); i++)
     {
         VectorXd step_vec(dim);
         step_vec = VectorXd::Zero(dim);
@@ -116,6 +128,15 @@ MatrixXd init_simplex_args(const VectorXd& x_start,
 
 
 
+/**
+ * @brief Initializes .
+ *
+ * This function takes .
+ *
+ * @param func         A .
+ * @param simplex_args The .
+ * @return             The .
+ */
 VectorXd get_simplex_results(      double    (*func)(const VectorXd&),
                              const MatrixXd& simplex_args)
 {
