@@ -129,13 +129,14 @@ MatrixXd init_simplex_args(const VectorXd& x_start,
 
 
 /**
- * @brief Initializes .
+ * @brief Evaluates the given system function for each "simplex" argument.
  *
- * This function takes .
+ * This function evaluates the given system function for each "simplex" argument and
+ * returns the result as a matrix.
  *
- * @param func         A .
- * @param simplex_args The .
- * @return             The .
+ * @param func         Given system function for the arguments to be evaluated at.
+ * @param simplex_args The "simplex" arguments.
+ * @return             The results of evaluating the given system function at the "simplex" arguments.
  */
 VectorXd get_simplex_results(      double    (*func)(const VectorXd&),
                              const MatrixXd& simplex_args)
@@ -153,6 +154,15 @@ VectorXd get_simplex_results(      double    (*func)(const VectorXd&),
 
 
 
+/**
+ * @brief Evaluates .
+ *
+ * This .
+ *
+ * @param simplex_args    Given .
+ * @param simplex_results The .
+ * @return                None.
+ */
 void sort_args_and_results(MatrixXd& simplex_args,
                            VectorXd& simplex_results)
 {
