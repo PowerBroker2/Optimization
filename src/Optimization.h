@@ -75,6 +75,19 @@ VectorXi find_vec_ord(const VectorXd& vec)
 
 
 
+/**
+ * @brief Reorder columns based on given column order.
+ *
+ * This function takes a matrix "mat" and vector of
+ * column orders "order" and sorts the columns of "mat"
+ * such that the ith column of "mat" should be put in
+ * the order(ith) location in the returned, reordered
+ * matrix "ordered_mat".
+ *
+ * @param mat   The matrix whos columns are to be reordered.
+ * @param order The vector detailing which location the corresponding column should be placed in.
+ * @return      The reordered matrix.
+ */
 MatrixXd sort_cols(const MatrixXd& mat, const VectorXi& order)
 {
     int rows = mat.rows();
@@ -155,12 +168,17 @@ VectorXd get_simplex_results(      double    (*func)(const VectorXd&),
 
 
 /**
- * @brief Evaluates .
+ * @brief Sort the simplex arguments and function outputs by function output.
  *
- * This .
+ * This function sorts the simplex arguments and function outputs such
+ * that the argument that produces the smallest function output is last
+ * (rightmost col) and the argument that produces the largest function
+ * output is first (leftmost col). Later, the simplex argument with the
+ * largest function output will then be updated to move the entire simplex
+ * to convergence at the function's minimum value.
  *
- * @param simplex_args    Given .
- * @param simplex_results The .
+ * @param simplex_args    The "simplex" arguments.
+ * @param simplex_results The sorted "simplex" arguments.
  * @return                None.
  */
 void sort_args_and_results(MatrixXd& simplex_args,
