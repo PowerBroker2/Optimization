@@ -26,6 +26,19 @@ void printVecXd(const VectorXd& vec,
 }
 
 
+void printVecXi(const VectorXi& vec,
+                Stream&         stream=Serial)
+{
+    for (int i=0; i<vec.rows(); i++)
+    {
+        if (vec(i) >= 0)
+            Serial.print(' ');
+        
+        stream.println(vec(i));
+    }
+}
+
+
 void printMatXd(const MatrixXd& mat,
                 const int&      p=5,
                 Stream&         stream=Serial)
@@ -50,6 +63,19 @@ void printMatXd(const MatrixXd& mat,
 
 
 
+/**
+ * @brief Find order of each element based on value.
+ *
+ * This function takes a vector "vec" and ranks each
+ * value at each element. The ranking/ordering is such
+ * that the highest value of "vec" will be given the
+ * ranking/ordering of 0 and the lowest value of "vec"
+ * will be given the value of n-1 where n is the
+ * number of elements in "vec".
+ *
+ * @param vec The vector of whos elements need to be ranked/ordered.
+ * @return    A vector of integers denoting the ranking/ordering of each value in "vec".
+ */
 VectorXi find_vec_ord(const VectorXd& vec)
 {
     int dim = vec.size();
@@ -101,6 +127,21 @@ MatrixXd sort_cols(const MatrixXd& mat, const VectorXi& order)
         ordered_mat.col(order(i)) = mat.col(i);
 
     return ordered_mat;
+}
+
+
+
+
+VectorXd sort_elements(const VectorXd& vec, const VectorXi& order)
+{
+    int dim = vec.size();
+
+    VectorXd ordered_vec(dim);
+
+    for (int i=0; i<dim; i++)
+        ordered_vec(order(i)) = vec(i);
+
+    return ordered_vec;
 }
 
 
@@ -188,7 +229,7 @@ void sort_args_and_results(MatrixXd& simplex_args,
 
     // Sort highest cost in leftmost column and lowest cost in rightmost column
     simplex_args    = sort_cols(simplex_args, sort_order);
-    simplex_results = sort_cols((MatrixXd)simplex_results, sort_order); // ??????
+    simplex_results = sort_elements(simplex_results, vec_ord);
 }
 
 
