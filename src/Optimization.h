@@ -242,7 +242,7 @@ void sort_args_and_results(MatrixXd& simplex_args,
 
     // Sort highest cost in leftmost column and lowest cost in rightmost column
     simplex_args    = sort_cols(simplex_args, sort_order);
-    simplex_results = sort_elements(simplex_results, vec_ord);
+    simplex_results = sort_elements(simplex_results, sort_order);
 }
 
 
