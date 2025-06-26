@@ -248,19 +248,34 @@ void sort_args_and_results(MatrixXd& simplex_args,
 
 
 
+/**
+ * @brief Find centroid of all simplex args except for the one with largest result.
+ *
+ * This function finds centroid of all simplex args except for the one with
+ * largest result. Simplex arguments MUST be sorted beforehand.
+ *
+ * @param sorted_simplex_args The sorted "simplex" arguments.
+ * @return                    The vector representing the simplex's centroid coordinate.
+ */
 VectorXd calc_centroid(const MatrixXd& sorted_simplex_args)
 {
-    // Average of all args except for one with largest result
-    // Simplex arguments MUST be sorted beforehand
     return sorted_simplex_args(all, seq(1, last)).rowwise().mean();
 }
 
 
 
 
+/**
+ * @brief Find the best simplex argument in the sorted argument list.
+ *
+ * This function finds the best simplex argument in the sorted
+ * argument list. Simplex arguments MUST be sorted beforehand.
+ *
+ * @param sorted_simplex_args The sorted "simplex" arguments.
+ * @return                    The vector of the best simplex argument.
+ */
 VectorXd get_best_args(const MatrixXd& simplex_args)
 {
-    // Simplex arguments MUST be sorted beforehand
     return simplex_args(all, last);
 }
 
