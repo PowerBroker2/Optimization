@@ -132,6 +132,19 @@ MatrixXd sort_cols(const MatrixXd& mat, const VectorXi& order)
 
 
 
+/**
+ * @brief Reorder elements based on given order.
+ *
+ * This function takes a vector "vec" and vector of
+ * column orders "order" and sorts the elements of "vec"
+ * such that the ith value of "vec" should be put in
+ * the order(ith) location in the returned, reordered
+ * vector "ordered_vec".
+ *
+ * @param vec   The vector whos elements are to be reordered.
+ * @param order The vector detailing which location the corresponding element should be placed in.
+ * @return      The reordered vector.
+ */
 VectorXd sort_elements(const VectorXd& vec, const VectorXi& order)
 {
     int dim = vec.size();
