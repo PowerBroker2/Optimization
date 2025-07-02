@@ -12,55 +12,6 @@
 using namespace Eigen;
 
 
-void printVecXd(const VectorXd& vec,
-                const int&      p=5,
-                Stream&         stream=Serial)
-{
-    for (int i=0; i<vec.rows(); i++)
-    {
-        if (vec(i) >= 0)
-            Serial.print(' ');
-        
-        stream.println(vec(i), p);
-    }
-}
-
-
-void printVecXi(const VectorXi& vec,
-                Stream&         stream=Serial)
-{
-    for (int i=0; i<vec.rows(); i++)
-    {
-        if (vec(i) >= 0)
-            Serial.print(' ');
-        
-        stream.println(vec(i));
-    }
-}
-
-
-void printMatXd(const MatrixXd& mat,
-                const int&      p=5,
-                Stream&         stream=Serial)
-{
-    for (int i=0; i<mat.rows(); i++)
-    {
-        for (int j=0; j<mat.cols(); j++)
-        {
-            if (mat(i, j) >= 0)
-                Serial.print(' ');
-        
-            stream.print(mat(i, j), p);
-
-            if (j != (mat.cols() - 1))
-                stream.print(", ");
-        }
-
-        stream.println();
-    }
-}
-
-
 
 
 /**
@@ -332,8 +283,8 @@ void update_worst_case(VectorXd& new_args,
                        MatrixXd& simplex_args,
                        VectorXd& simplex_results)
 {
-    simplex_args(all, last) = new_args;
-    simplex_results(simplex_results.size() - 1) = new_score; // ??????
+    simplex_args(all, 0) = new_args;
+    simplex_results(0)   = new_score;
 }
 
 
@@ -464,7 +415,7 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
                               simplex_results);
             continue;
         }
-
+        
         // Shrink points
         shrink_args(sigma,
                     simplex_args,
@@ -472,5 +423,5 @@ VectorXd Nelder_Mead_Optimizer(      double   (*func)(const VectorXd&), // Funct
                     func);
     }
 
-    return simplex_args(all, last);
+    return get_best_args(simplex_args);
 }
