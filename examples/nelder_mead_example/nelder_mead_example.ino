@@ -1,22 +1,66 @@
 #include "Optimization.h"
 
 
+void printVecXd(const VectorXd& vec,
+                const int&      p=5,
+                Stream&         stream=Serial)
+{
+    for (int i=0; i<vec.rows(); i++)
+    {
+        if (vec(i) >= 0)
+            Serial.print(' ');
+        
+        stream.println(vec(i), p);
+    }
+}
+
+
+void printVecXi(const VectorXi& vec,
+                Stream&         stream=Serial)
+{
+    for (int i=0; i<vec.rows(); i++)
+    {
+        if (vec(i) >= 0)
+            Serial.print(' ');
+        
+        stream.println(vec(i));
+    }
+}
+
+
+void printMatXd(const MatrixXd& mat,
+                const int&      p=5,
+                Stream&         stream=Serial)
+{
+    for (int i=0; i<mat.rows(); i++)
+    {
+        for (int j=0; j<mat.cols(); j++)
+        {
+            if (mat(i, j) >= 0)
+                Serial.print(' ');
+        
+            stream.print(mat(i, j), p);
+
+            if (j != (mat.cols() - 1))
+                stream.print(", ");
+        }
+
+        stream.println();
+    }
+}
+
+
 double function(const VectorXd& x)
 {
     VectorXd x_real(3);
     x_real << 0, 1, 2;
 
-    VectorXd cross_product(3);
-    cross_product << ( (x(1) * x_real(2)) - (x(2) * x_real(1))),
-                     (-(x(0) * x_real(2)) + (x(2) * x_real(0))),
-                     ( (x(0) * x_real(1)) - (x(1) * x_real(0)));
-    
-    Serial.println();
-    printVecXd(cross_product);
-    Serial.println();
+    VectorXd diff(3);
+    diff = x_real - x;
 
-    return cross_product.norm();
+    return diff.norm();
 }
+
 
 void setup()
 {
@@ -26,25 +70,21 @@ void setup()
     digitalWrite(LED_BUILTIN, HIGH);
     
     VectorXd x_start(3);
-    x_start << 0, 1, 2;
+    x_start << 2, 2, 2;
     
-    MatrixXd mat(3, 3);
-    mat << 1, 0, 0,
-           0, 1, 0,
-           0, 0, 1;
+    auto res = Nelder_Mead_Optimizer(function, x_start, 0.1, 10e-10);
     
-    Serial.println("x_start");
+    Serial.println();
+    Serial.println("Starting Vector");
     printVecXd(x_start);
     Serial.println();
-    Serial.println("init simplex args");
-    printMatXd(init_simplex_args(x_start));
+    Serial.println("Optimized Vector");
+    printVecXd(res);
     Serial.println();
-    Serial.println("init simplex results");
-    printVecXd(get_simplex_results(function,
-                                   init_simplex_args(x_start)));
-
-    //auto res = Nelder_Mead_Optimizer(function, x_start, 0.1, 10e-10);
+    Serial.println("Optimized Vector Score (closer to 0 is better)");
+    Serial.println(function(res));
 }
+
 
 void loop()
 {
