@@ -233,6 +233,15 @@ VectorXd get_best_args(const MatrixXd& simplex_args)
 
 
 
+/**
+ * @brief Find the best simplex result in the sorted results list.
+ *
+ * This function finds the best simplex result in the sorted
+ * results list. Simplex results MUST be sorted beforehand.
+ *
+ * @param simplex_results The sorted "simplex" results.
+ * @return                The vector of the best simplex result.
+ */
 double get_best_result(const VectorXd& simplex_results)
 {
     // Simplex results MUST be sorted beforehand
@@ -242,6 +251,15 @@ double get_best_result(const VectorXd& simplex_results)
 
 
 
+/**
+ * @brief Find the 2nd best simplex argument in the sorted argument list.
+ *
+ * This function finds the 2nd best simplex argument in the sorted
+ * argument list. Simplex arguments MUST be sorted beforehand.
+ *
+ * @param sorted_simplex_args The sorted "simplex" arguments.
+ * @return                    The vector of the best simplex argument.
+ */
 VectorXd get_next_best_args(const MatrixXd& simplex_args)
 {
     // Simplex arguments MUST be sorted beforehand
@@ -251,6 +269,15 @@ VectorXd get_next_best_args(const MatrixXd& simplex_args)
 
 
 
+/**
+ * @brief Find the 2nd best simplex result in the sorted results list.
+ *
+ * This function finds the 2nd best simplex result in the sorted
+ * results list. Simplex results MUST be sorted beforehand.
+ *
+ * @param simplex_results The sorted "simplex" results.
+ * @return                The vector of the best simplex result.
+ */
 double get_next_best_result(const VectorXd& simplex_results)
 {
     // Simplex results MUST be sorted beforehand
@@ -260,6 +287,15 @@ double get_next_best_result(const VectorXd& simplex_results)
 
 
 
+/**
+ * @brief Find the worst simplex argument in the sorted argument list.
+ *
+ * This function finds the worst simplex argument in the sorted
+ * argument list. Simplex arguments MUST be sorted beforehand.
+ *
+ * @param sorted_simplex_args The sorted "simplex" arguments.
+ * @return                    The vector of the best simplex argument.
+ */
 VectorXd get_worst_args(const MatrixXd& simplex_args)
 {
     // Simplex arguments MUST be sorted beforehand
@@ -269,6 +305,15 @@ VectorXd get_worst_args(const MatrixXd& simplex_args)
 
 
 
+/**
+ * @brief Find the worst simplex result in the sorted results list.
+ *
+ * This function finds the worst simplex result in the sorted
+ * results list. Simplex results MUST be sorted beforehand.
+ *
+ * @param simplex_results The sorted "simplex" results.
+ * @return                The vector of the best simplex result.
+ */
 double get_worst_result(const VectorXd& simplex_results)
 {
     // Simplex results MUST be sorted beforehand
