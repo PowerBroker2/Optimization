@@ -24,7 +24,10 @@ void setup()
     VectorXd x_start(3);
     x_start << 2, 2, 2;
     
-    auto res = Nelder_Mead_Optimizer(function, x_start, 0.1, 10e-10);
+    auto res = Nelder_Mead_Optimizer(function,
+                                     x_start,
+                                     0.1,
+                                     10e-10);
     
     Serial.println();
     Serial.println("Starting Vector");
